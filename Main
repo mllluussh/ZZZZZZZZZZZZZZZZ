@@ -1,0 +1,34 @@
+public class Main {
+    public static void main(String[] args) {
+        PersonalAccount account = new PersonalAccount(1001, "Милана");
+        PersonalAccount second = new PersonalAccount(1002, "Айбек");
+        account.deposit(1000);
+        account.withdraw(250);
+        account.add(100).add(50).subtract(30);
+        try {
+            account.withdraw(5000);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+        try {
+            account.deposit(-100);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+        try {
+            account.subtract(0);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+        second.add(300).subtract(100);
+
+        System.out.println();
+        account.printTransactionHistory();
+        System.out.println("Текущий баланс: " + account.getBalance());
+        System.out.println(account);
+
+        System.out.println();
+        second.printTransactionHistory();
+        System.out.println(second);
+    }
+}
