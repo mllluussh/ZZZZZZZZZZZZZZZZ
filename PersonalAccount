@@ -1,0 +1,92 @@
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Личный банковский счёт: баланс и история операций.
+ */
+public class PersonalAccount {
+    private int accountNumber;
+    private String accountHolder;
+    private double balance;
+    private List<Amount> transactions;
+
+    public PersonalAccount(int accountNumber, String accountHolder) {
+        this.accountNumber = accountNumber;
+        this.accountHolder = accountHolder;
+        this.balance = 0.0;
+        this.transactions = new ArrayList<>();
+    }
+
+    // Пополнение счёта
+    public void deposit(double amount) {
+        checkAmount(amount);
+        transactions.add(new Amount(amount, LocalDateTime.now(), "DEPOSIT"));
+        balance += amount;
+    }
+
+    // Снятие денег. Нельзя снять больше, чем есть на балансе
+    public void withdraw(double amount) {
+        checkAmount(amount);
+        if (amount > balance) {
+            throw new IllegalArgumentException(
+                    "Недостаточно средств: на счёте " + balance + ", а нужно " + amount);
+        }
+        transactions.add(new Amount(amount, LocalDateTime.now(), "WITHDRAWAL"));
+        balance -= amount;
+    }
+
+    // Проверка суммы: она должна быть больше нуля
+    private void checkAmount(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Сумма должна быть больше нуля: " + amount);
+        }
+    }
+
+    public void printTransactionHistory() {
+        System.out.println("История операций по счёту " + accountNumber + ":");
+        if (transactions.isEmpty()) {
+            System.out.println("  (операций пока нет)");
+            return;
+        }
+        for (Amount transaction : transactions) {
+            System.out.println("  " + transaction);
+        }
+    }
+
+    // То же, что deposit, но возвращает this, чтобы можно было делать цепочки
+    public PersonalAccount add(double amount) {
+        deposit(amount);
+        return this;
+    }
+
+    // То же, что withdraw, но возвращает this
+    public PersonalAccount subtract(double amount) {
+        withdraw(amount);
+        return this;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public int getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(int accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public String getAccountHolder() {
+        return accountHolder;
+    }
+
+    public void setAccountHolder(String accountHolder) {
+        this.accountHolder = accountHolder;
+    }
+    @Override
+    public String toString() {
+        return "Счёт №" + accountNumber + ", владелец: " + accountHolder + ", баланс: " + balance;
+    }
+}
